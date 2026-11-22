@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+<title>ZipBox</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="toolbar">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 200 200" aria-hidden="true">
+      <rect width="200" height="200" rx="44" fill="#534AB7"/>
+      <rect x="22" y="22" width="156" height="156" rx="30" fill="#6A60D0"/>
+      <g fill="#fff">
+        <rect x="82" y="26" width="16" height="9" rx="2"/><rect x="102" y="40" width="16" height="9" rx="2"/>
+        <rect x="82" y="54" width="16" height="9" rx="2"/><rect x="102" y="68" width="16" height="9" rx="2"/>
+        <rect x="82" y="82" width="16" height="9" rx="2"/><rect x="102" y="96" width="16" height="9" rx="2"/>
+      </g>
+      <rect x="82" y="112" width="36" height="34" rx="9" fill="#FAC775"/>
+      <rect x="94" y="122" width="12" height="14" rx="3" fill="#6A60D0"/>
+      <circle cx="100" cy="163" r="9" fill="none" stroke="#FAC775" stroke-width="4"/>
+    </svg>
+    <b>ZipBox</b>
+  </div>
+
+  <button class="tb" id="b-open" title="Открыть архив (Ctrl+O)">
+    <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span>Открыть</span>
+  </button>
+  <button class="tb" id="b-create" title="Создать архив (Ctrl+N)">
+    <svg viewBox="0 0 24 24"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M12 11v6M9 14h6"/></svg>
+    <span>Создать</span>
+  </button>
+  <span class="sep"></span>
+  <button class="tb" id="b-extract" data-needs="arc" title="Распаковать (Ctrl+E)">
+    <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>
+    <span>Распаковать</span>
+  </button>
+  <button class="tb" id="b-add" data-needs="modify" title="Добавить в архив">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    <span>Добавить</span>
+  </button>
+  <button class="tb" id="b-delete" data-needs="modify" title="Удалить из архива (Del)">
+    <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg>
+    <span>Удалить</span>
+  </button>
+  <button class="tb" id="b-test" data-needs="arc" title="Проверить архив">
+    <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+    <span>Проверить</span>
+  </button>
+</header>
+
+<nav id="crumbs"></nav>
+
+<main id="view">
+  <div id="empty">
+    <svg width="96" height="96" viewBox="0 0 200 200" aria-hidden="true">
+      <rect width="200" height="200" rx="44" fill="#534AB7"/>
+      <rect x="22" y="22" width="156" height="156" rx="30" fill="#6A60D0"/>
+      <g fill="#fff">
+        <rect x="82" y="26" width="16" height="9" rx="2"/><rect x="102" y="40" width="16" height="9" rx="2"/>
+        <rect x="82" y="54" width="16" height="9" rx="2"/><rect x="102" y="68" width="16" height="9" rx="2"/>
+        <rect x="82" y="82" width="16" height="9" rx="2"/><rect x="102" y="96" width="16" height="9" rx="2"/>
+      </g>
+      <rect x="82" y="112" width="36" height="34" rx="9" fill="#FAC775"/>
+      <rect x="94" y="122" width="12" height="14" rx="3" fill="#6A60D0"/>
+      <circle cx="100" cy="163" r="9" fill="none" stroke="#FAC775" stroke-width="4"/>
+    </svg>
+    <h1>ZipBox</h1>
+    <p>Перетащите архив сюда или нажмите «Открыть».<br>Файлы и папки можно перетащить, чтобы создать новый архив.</p>
+    <div class="row">
+      <button class="primary" id="e-open">Открыть архив</button>
+      <button id="e-create">Создать архив</button>
+    </div>
+    <small>ZIP · 7Z · TAR · GZ · TGZ · BZ2 · XZ</small>
+  </div>
+
+  <div id="tablewrap" class="hidden" tabindex="0">
+    <table>
+      <thead>
+        <tr>
+          <th data-k="name" class="c-name">Имя</th>
+          <th data-k="size" class="c-num">Размер</th>
+          <th data-k="packed" class="c-num">Сжато</th>
+          <th data-k="modified" class="c-date">Изменён</th>
+          <th data-k="type" class="c-type">Тип</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  <span id="status">Готово</span>
+  <div id="bar" class="hidden"><i></i></div>
+</footer>
+
+<div id="drop" class="hidden"><div>Отпустите файлы здесь</div></div>
+<div id="overlay" class="hidden"><div id="modal"></div></div>
+<div id="ctx" class="hidden"></div>
+<div id="toast" class="hidden"></div>
+
+<script src="renderer.js"></script>
+</body>
+</html>

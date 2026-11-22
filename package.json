@@ -1,0 +1,67 @@
+{
+  "name": "zipbox",
+  "productName": "ZipBox",
+  "version": "1.0.0",
+  "description": "ZipBox - простой архиватор для Windows",
+  "main": "main.js",
+  "author": "ZipBox",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never"
+  },
+  "dependencies": {
+    "7zip-bin": "^5.2.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.zipbox.app",
+    "productName": "ZipBox",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "archive.js",
+      "renderer/**",
+      "build/icon.png",
+      "package.json",
+      "!**/node_modules/7zip-bin/{linux,mac}/**"
+    ],
+    "asarUnpack": [
+      "node_modules/7zip-bin/win/**"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "portable",
+        "nsis"
+      ],
+      "artifactName": "ZipBox-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "zip",
+          "7z",
+          "tar",
+          "gz",
+          "tgz",
+          "bz2",
+          "xz"
+        ],
+        "name": "Архив",
+        "role": "Viewer"
+      }
+    ]
+  }
+}
